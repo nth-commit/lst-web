@@ -22,11 +22,11 @@ export function Home({ position }: HomeProps) {
       value: format(suntimeInfo.nowUtc, `dd-MM-yyyy HH:mm:ss`),
     },
     {
-      label: `Sunrise (${suntimeInfo.localTimezone})`,
+      label: `Sunrise @ Geolocation (${suntimeInfo.localTimezone})`,
       value: format(suntimeInfo.sunriseLocal, `dd-MM-yyyy HH:mm:ss`),
     },
     {
-      label: `Sunrise (UTC)`,
+      label: `Sunrise @ Geolocation (UTC)`,
       value: format(suntimeInfo.sunriseUtc, `dd-MM-yyyy HH:mm:ss`),
     },
     {
