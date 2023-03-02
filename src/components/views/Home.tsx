@@ -7,6 +7,7 @@ export type HomeProps = {
 
 export function Home({ position }: HomeProps) {
   const suntimeInfo = useSuntimeInfo(position)
+  const localeOptions = Intl.DateTimeFormat().resolvedOptions()
 
   const facets: ReadonlyArray<{ label: string; value: string; strong?: boolean }> = [
     {
@@ -14,7 +15,7 @@ export function Home({ position }: HomeProps) {
       value: `${position.coords.latitude}, ${position.coords.longitude}`,
     },
     {
-      label: `Now (${suntimeInfo.localTimezone})`,
+      label: `Now (${localeOptions.timeZone})`,
       value: format(suntimeInfo.nowLocal, `dd-MM-yyyy HH:mm:ss`),
     },
     {
@@ -22,7 +23,7 @@ export function Home({ position }: HomeProps) {
       value: format(suntimeInfo.nowUtc, `dd-MM-yyyy HH:mm:ss`),
     },
     {
-      label: `Sunrise @ Geolocation (${suntimeInfo.localTimezone})`,
+      label: `Sunrise @ Geolocation (${localeOptions.timeZone})`,
       value: format(suntimeInfo.sunriseLocal, `dd-MM-yyyy HH:mm:ss`),
     },
     {
