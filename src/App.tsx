@@ -1,26 +1,16 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useGeolocation } from './components/hooks/useGeolocation'
+import { Home } from './components/views/Home'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+function App(): JSX.Element {
+  const geolocationResult = useGeolocation()
+  switch (geolocationResult.type) {
+    case 'approved':
+      return <Home position={geolocationResult.position} />
+    case 'pending':
+      return <span>Geolocation permission pending</span>
+    case 'denied':
+      return <span>Geolocation is required to use this site. TODO: Add manual location input</span>
+  }
 }
 
-export default App;
+export default App
