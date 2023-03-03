@@ -5,7 +5,11 @@ function App(): JSX.Element {
   const geolocationResult = useGeolocation()
   switch (geolocationResult.type) {
     case 'approved':
-      return <Home position={geolocationResult.position} />
+      return (
+        <div style={{ marginLeft: '15px', marginRight: '15px', height: '100%' }}>
+          <Home position={geolocationResult.position} />
+        </div>
+      )
     case 'pending':
       return <span>Geolocation permission pending</span>
     case 'denied':
