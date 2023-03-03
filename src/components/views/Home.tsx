@@ -1,5 +1,6 @@
 import format from 'date-fns/format'
 import formatDistanceStrict from 'date-fns/formatDistanceStrict'
+import { useState } from 'react'
 import { SuntimeInfo, SuntimeTimeInfo } from '../../lib/SuntimeInfo'
 import { useSuntimeInfo } from '../hooks/useSuntimeInfo'
 
@@ -8,35 +9,53 @@ export type HomeProps = {
 }
 
 const displayOrder: Array<keyof SuntimeInfo['timezones']> = ['lst', 'lst+24', 'local', 'utc']
+// eslint-disable-next-line no-script-url
+const fakeLink = 'javascript:void(0)'
 
 export function Home({ position }: HomeProps) {
+  const [showMoreInfo, setShowMoreInfo] = useState<boolean>(false)
   const lstOffsetResolution = '5 minutes'
   const suntimeInfo = useSuntimeInfo(position, lstOffsetResolution)
+  const useLst24 = true as boolean
 
   return (
     <>
       <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-        <h1 style={{ textAlign: 'center' }}>{format(suntimeInfo.timezones['lst+24'].now, `H:mm:ssaaa`)}</h1>
-        <table>
-          <thead>
-            <tr>
-              <th>Timezone</th>
-              <th>Current Time</th>
-              <th>Today's Sunrise Time</th>
-              <th>UTC Offset</th>
-            </tr>
-          </thead>
-          <tbody>
-            {displayOrder.map((id) => (
-              <TimeInfoRow key={id} id={id as keyof SuntimeInfo['timezones']} suntimeInfo={suntimeInfo.timezones[id]} />
-            ))}
-          </tbody>
-        </table>
-        <div style={{ marginTop: 'auto', marginBottom: '15px', paddingLeft: '5px' }}>
+        <h1 style={{ textAlign: 'center' }}>
+          {format(suntimeInfo.timezones[useLst24 ? 'lst+24' : 'lst'].now, `H:mm:ssaaa`)}
+        </h1>
+        <div>
           <div>
             Geolocation: {position.coords.latitude}, {position.coords.longitude}
           </div>
           <div>LST Offset Resolution: {lstOffsetResolution}</div>
+          <div>LST+24 Enabled: {useLst24 ? 'Yes' : 'No'}</div>
+        </div>
+        {showMoreInfo === true && (
+          <table style={{ marginTop: '15px' }}>
+            <thead>
+              <tr>
+                <th>Timezone</th>
+                <th>Current Time</th>
+                <th>Today's Sunrise Time</th>
+                <th>UTC Offset</th>
+              </tr>
+            </thead>
+            <tbody>
+              {displayOrder.map((id) => (
+                <TimeInfoRow
+                  key={id}
+                  id={id as keyof SuntimeInfo['timezones']}
+                  suntimeInfo={suntimeInfo.timezones[id]}
+                />
+              ))}
+            </tbody>
+          </table>
+        )}
+        <div style={{ marginTop: '15px' }}>
+          <a href={fakeLink} onClick={() => setShowMoreInfo(!showMoreInfo)}>
+            {showMoreInfo ? 'Less info' : 'More info'}
+          </a>
         </div>
       </div>
     </>
