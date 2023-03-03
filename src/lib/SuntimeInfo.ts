@@ -81,7 +81,7 @@ export namespace SuntimeInfo {
   ): Date {
     const lstOffsetResolutionTicks = getLstOffsetResolutionTicks(lstOffsetResolution)
     const lstOffsetRemainder = sunriseUtc.getTime() % (lstOffsetResolutionTicks || 1)
-    return new Date(sunriseUtc.getTime() - lstOffsetRemainder + (lstOffsetResolutionTicks || 0)) // Shift one?
+    return new Date(sunriseUtc.getTime() - lstOffsetRemainder)
   }
 
   function getLstOffsetResolutionTicks(
