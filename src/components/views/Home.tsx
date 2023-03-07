@@ -21,7 +21,7 @@ export function Home({ position }: HomeProps) {
   return (
     <>
       <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-        <h1 style={{ textAlign: 'center' }}>{format(timeinfo.now, `H:mm:ssaaa`)}</h1>
+        <h1 style={{ textAlign: 'center' }}>{format(timeinfo.now, `h:mm:ssaaa`)}</h1>
         <div>
           <div>
             Geolocation: {position.coords.latitude}, {position.coords.longitude}

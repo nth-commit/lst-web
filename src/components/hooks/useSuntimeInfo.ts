@@ -28,7 +28,7 @@ const calculate = (position: GeolocationPosition, lstOffsetResolution: SuntimeIn
     timestamp: new Date().getTime(),
     latitude,
     longitude,
-    localTimezoneOffset: -new Date().getTimezoneOffset() * 60 * 1000,
+    localTimezoneOffset: new Date().getTimezoneOffset() * 60 * 1000,
     lstOffsetResolution,
   }
 
