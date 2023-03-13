@@ -77,13 +77,13 @@ export namespace LocalSunTimeV2 {
   }
 
   export function findAdjustment(adjustments: TimeZoneAdjustment[], timestamp: number): TimeZoneAdjustment {
-    const adjustment = adjustments.find((adjustment) => adjustment.timestamp >= timestamp)
+    const adjustmentIndex = adjustments.findIndex((adjustment) => adjustment.timestamp >= timestamp)
 
-    if (!adjustment) {
+    if (adjustmentIndex < 0) {
       throw new Error('Could not find an adjustment for the given timestamp')
     }
 
-    return adjustment
+    return adjustments[adjustmentIndex - 1]
   }
 
   function* utcDayStarts(fromYear: number, fromMonth: number, fromDay: number): Generator<number> {
