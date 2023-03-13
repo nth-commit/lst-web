@@ -7,4 +7,8 @@ export namespace DateUtils {
     const remainingMinutes = minutes % 60
     return `${sign}${hours.toString().padStart(2, '0')}:${remainingMinutes.toString().padStart(2, '0')}`
   }
+
+  export function currentTimestamp(): number {
+    return new Date().getTime()
+  }
 }

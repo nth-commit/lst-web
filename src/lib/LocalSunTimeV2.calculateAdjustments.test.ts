@@ -1,5 +1,5 @@
 import { DateUtils } from './DateUtils'
-import { SpecificTimeZoneAdjustment, LocalSunTimeAdjustmentsOptions, LocalSunTimeV2 } from './LocalSunTimeV2'
+import { TimeZoneAdjustment, LocalSunTimeAdjustmentsOptions, LocalSunTimeV2 } from './LocalSunTimeV2'
 
 const sampleGeolocation = {
   latitude: -43.5330136,
@@ -345,7 +345,7 @@ Array [
 `)
 })
 
-function formatAdjustment(adjustment: SpecificTimeZoneAdjustment) {
+function formatAdjustment(adjustment: TimeZoneAdjustment) {
   return {
     timestamp: new Date(adjustment.timestamp).toISOString(),
     offset: DateUtils.formatOffset(adjustment.offset),

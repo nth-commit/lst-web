@@ -13,6 +13,13 @@ export namespace DateTimeOffset {
     }
   }
 
+  export function utc(timestamp: number): DateTimeOffset {
+    return {
+      timestamp,
+      offset: 0,
+    }
+  }
+
   export function format(d: DateTimeOffset, format: string): string {
     const systemTimeZoneOffset = -new Date().getTimezoneOffset() * 60 * 1000
     const date = new Date(d.timestamp - systemTimeZoneOffset + d.offset)

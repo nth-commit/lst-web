@@ -30,7 +30,7 @@ export type LocalSunTimeAdjustmentsOptions = {
   useLstPlus24: boolean
 }
 
-export type SpecificTimeZoneAdjustment = {
+export type TimeZoneAdjustment = {
   timestamp: number
   offset: number
 }
@@ -38,11 +38,11 @@ export type SpecificTimeZoneAdjustment = {
 export namespace LocalSunTimeV2 {
   const originUtcDay = [2023, 1, 1] as const // Not a leap year
 
-  export function calculateAdjustments(options: LocalSunTimeAdjustmentsOptions): SpecificTimeZoneAdjustment[] {
-    const calculateLstOffsetWithOptions = (timestamp: number): SpecificTimeZoneAdjustment =>
+  export function calculateAdjustments(options: LocalSunTimeAdjustmentsOptions): TimeZoneAdjustment[] {
+    const calculateLstOffsetWithOptions = (timestamp: number): TimeZoneAdjustment =>
       calculateAdjustment(timestamp, options.latitude, options.longitude, options.lstOffsetResolution)
 
-    return Array.from(
+    const result = Array.from(
       from(utcDayStarts(...originUtcDay)).pipe(
         take(366), // One year + 1 day
         map(calculateLstOffsetWithOptions),
@@ -55,14 +55,35 @@ export namespace LocalSunTimeV2 {
         )
       )
     )
+
+    console.log(result)
+
+    return result
   }
 
   export function calculateCurrentUtcOffset(options: LocalSunTimeAdjustmentsOptions & { timestamp: number }): number {
     const adjustments = calculateAdjustments(options)
+    return findOffset(adjustments, options.timestamp)
+  }
 
-    const currentUtcOffset = adjustments.find((adjustment) => adjustment.timestamp >= options.timestamp)?.offset
+  export function findOffset(adjustments: TimeZoneAdjustment[], timestamp: number): number {
+    const adjustment = adjustments.find((adjustment) => adjustment.timestamp >= timestamp)
 
-    return currentUtcOffset!
+    if (!adjustment) {
+      throw new Error('Could not find an adjustment for the given timestamp')
+    }
+
+    return adjustment.offset
+  }
+
+  export function findAdjustment(adjustments: TimeZoneAdjustment[], timestamp: number): TimeZoneAdjustment {
+    const adjustment = adjustments.find((adjustment) => adjustment.timestamp >= timestamp)
+
+    if (!adjustment) {
+      throw new Error('Could not find an adjustment for the given timestamp')
+    }
+
+    return adjustment
   }
 
   function* utcDayStarts(fromYear: number, fromMonth: number, fromDay: number): Generator<number> {
@@ -83,7 +104,7 @@ export namespace LocalSunTimeV2 {
     latitude: number,
     longitude: number,
     lstOffsetResolution: LocalSunTimeAdjustmentsOptions['lstOffsetResolution']
-  ): SpecificTimeZoneAdjustment {
+  ): TimeZoneAdjustment {
     const sunriseUtcTimestamp = getSunriseUtc(timestamp, latitude, longitude)
     const exactLstOffset = timestamp - sunriseUtcTimestamp
 
@@ -122,10 +143,10 @@ export namespace LocalSunTimeV2 {
   }
 
   function offsetAdjustmentByPreferences(
-    adjustment: SpecificTimeZoneAdjustment,
+    adjustment: TimeZoneAdjustment,
     adjustmentTimeOffset: number,
     useLstPlus24: boolean
-  ): SpecificTimeZoneAdjustment {
+  ): TimeZoneAdjustment {
     const offset = useLstPlus24 ? adjustment.offset + 24 * 60 * 60 * 1000 : adjustment.offset
     const timestampAtStartOfDay = adjustment.timestamp - offset
     const adjustmentTimestamp = timestampAtStartOfDay + adjustmentTimeOffset + offset
