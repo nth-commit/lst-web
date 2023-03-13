@@ -2211,6 +2211,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@reactivex/ix-es5-cjs@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "@reactivex/ix-es5-cjs@npm:5.0.0"
+  dependencies:
+    "@types/node": ^13.7.4
+    tslib: ^2.3.0
+  checksum: cd32c74010025b36d05439635e72d51edf1741dca5ce07be2e3e5e8085cf43b35b290bb00306b34b5eff8aae10e0ddd7362ddcf7a9074384659c727eed2269c1
+  languageName: node
+  linkType: hard
+
 "@rollup/plugin-babel@npm:^5.2.0":
   version: 5.3.1
   resolution: "@rollup/plugin-babel@npm:5.3.1"
@@ -7534,13 +7544,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ix@npm:^5.0.0":
-  version: 5.0.0
-  resolution: "ix@npm:5.0.0"
+"ix@npm:^4.6.1":
+  version: 4.6.1
+  resolution: "ix@npm:4.6.1"
   dependencies:
     "@types/node": ^13.7.4
     tslib: ^2.3.0
-  checksum: b8c2f622b8af5bec0c401c32571bade8f5bbfe15a50ee08cda5428027b609959147278c403b1695955b276495a68eea65a7a33333692f924737f31dcb7a42d57
+  checksum: d2ff95d7a9382e30ca7c285e2b3a08dac785c159880526e2dd231841bee438bad1b12dfed1652ea7e0abcd9a67225f2e09cebb5136fe059cebe29ec297a70e33
   languageName: node
   linkType: hard
 
@@ -8616,6 +8626,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "lst-web@workspace:."
   dependencies:
+    "@reactivex/ix-es5-cjs": ^5.0.0
     "@testing-library/jest-dom": ^5.14.1
     "@testing-library/react": ^13.0.0
     "@testing-library/user-event": ^13.2.1
@@ -8625,12 +8636,12 @@ __metadata:
     "@types/react-dom": ^18.0.0
     date-fns: ^2.29.3
     gh-pages: ^5.0.0
-    ix: ^5.0.0
+    ix: ^4.6.1
     react: ^18.2.0
     react-dom: ^18.2.0
     react-scripts: 5.0.1
     sunrise-sunset-js: ^2.2.1
-    typescript: ^4.4.2
+    typescript: ^4.9.5
     web-vitals: ^2.1.0
   languageName: unknown
   linkType: soft
@@ -12328,7 +12339,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^4.4.2":
+"typescript@npm:^4.9.5":
   version: 4.9.5
   resolution: "typescript@npm:4.9.5"
   bin:
@@ -12338,7 +12349,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@^4.4.2#~builtin<compat/typescript>":
+"typescript@patch:typescript@^4.9.5#~builtin<compat/typescript>":
   version: 4.9.5
   resolution: "typescript@patch:typescript@npm%3A4.9.5#~builtin<compat/typescript>::version=4.9.5&hash=23ec76"
   bin:

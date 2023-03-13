@@ -11,7 +11,7 @@ function App(): JSX.Element {
         </div>
       )
     case 'pending':
-      return <span>Geolocation permission pending</span>
+      return <span></span>
     case 'denied':
       return <span>Geolocation is required to use this site. TODO: Add manual location input</span>
   }

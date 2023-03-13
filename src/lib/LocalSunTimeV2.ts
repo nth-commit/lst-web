@@ -1,6 +1,6 @@
 import { getSunrise } from 'sunrise-sunset-js'
-import { from } from 'ix/iterable'
-import { take, distinctUntilChanged, map, skip } from 'ix/iterable/operators'
+import { from } from '@reactivex/ix-es5-cjs/iterable'
+import { take, distinctUntilChanged, skip, map } from '@reactivex/ix-es5-cjs/iterable/operators'
 
 export type LocalSunTimeAdjustmentsOptions = {
   /**
@@ -55,6 +55,14 @@ export namespace LocalSunTimeV2 {
         )
       )
     )
+  }
+
+  export function calculateCurrentUtcOffset(options: LocalSunTimeAdjustmentsOptions & { timestamp: number }): number {
+    const adjustments = calculateAdjustments(options)
+
+    const currentUtcOffset = adjustments.find((adjustment) => adjustment.timestamp >= options.timestamp)?.offset
+
+    return currentUtcOffset!
   }
 
   function* utcDayStarts(fromYear: number, fromMonth: number, fromDay: number): Generator<number> {
