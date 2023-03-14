@@ -1,7 +1,7 @@
 import { getSunrise } from 'sunrise-sunset-js'
 import { from } from '@reactivex/ix-es5-cjs/iterable'
-import { take, skip, map, scan, repeat, takeWhile } from '@reactivex/ix-es5-cjs/iterable/operators'
-import { groupUntilChanged } from './IxUtils'
+import { take, skip, map, repeat } from '@reactivex/ix-es5-cjs/iterable/operators'
+import { groupUntilChanged, takeUntilFirstRepeated } from './IxUtils'
 
 export type LocalSunTimeAdjustmentsOptions = {
   /**
@@ -43,31 +43,23 @@ export namespace LocalSunTimeV2 {
     const calculateLstOffsetWithOptions = (timestamp: number): TimeZoneAdjustment =>
       calculateAdjustment(timestamp, options.latitude, options.longitude, options.lstOffsetResolution)
 
-    const result = Array.from(
+    return Array.from(
       from(utcDayStarts(...originUtcDay)).pipe(
         take(365),
         map(calculateLstOffsetWithOptions),
-        repeat(2), // Ensure it wraps around, we'll skip the first (incomplete) group
+        repeat(2), // Ensure it wraps around, we'll skip the first (most likely incomplete) group
         groupUntilChanged({
           keySelector: (x) => x.offset,
         }),
         skip(1), // The first unique offset might have been encountered at the end of the previous year
         map((group): TimeZoneAdjustment => group[Math.floor(group.length / 2)]),
-        scan(
-          (acc, curr, ix) => ({
-            isFirst: ix === 0,
-            first: acc.first ?? curr,
-            curr: curr,
-          }),
-          { isFirst: false, first: null! as TimeZoneAdjustment, curr: null! as TimeZoneAdjustment }
-        ),
-        takeWhile((x) => x.first === x.curr || x.first.timestamp !== x.curr.timestamp),
-        map((x) => x.curr)
+        takeUntilFirstRepeated({
+          keySelector: (x) => x.timestamp,
+        }),
+        map((adjustment) =>
+          offsetAdjustmentByPreferences(adjustment, options.adjustmentTimeOffset, options.useLstPlus24)
+        )
       )
-    )
-
-    return result.map((adjustment) =>
-      offsetAdjustmentByPreferences(adjustment, options.adjustmentTimeOffset, options.useLstPlus24)
     )
   }
 

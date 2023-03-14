@@ -48,7 +48,7 @@ export function Home({ position }: HomeProps) {
                 <thead>
                   <tr>
                     <th style={{ paddingRight: '15px' }}>Adjustment Date</th>
-                    <th style={{ paddingRight: '15px' }}>New LST Offset</th>
+                    <th style={{ paddingRight: '15px' }}>UTC Offset</th>
                   </tr>
                 </thead>
                 <tbody>
