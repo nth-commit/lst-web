@@ -1,6 +1,7 @@
 import { getSunrise } from 'sunrise-sunset-js'
 import { from } from '@reactivex/ix-es5-cjs/iterable'
-import { take, distinctUntilChanged, skip, map } from '@reactivex/ix-es5-cjs/iterable/operators'
+import { take, skip, map, scan, repeat, takeWhile } from '@reactivex/ix-es5-cjs/iterable/operators'
+import { groupUntilChanged } from './IxUtils'
 
 export type LocalSunTimeAdjustmentsOptions = {
   /**
@@ -44,21 +45,30 @@ export namespace LocalSunTimeV2 {
 
     const result = Array.from(
       from(utcDayStarts(...originUtcDay)).pipe(
-        take(366), // One year + 1 day
+        take(365),
         map(calculateLstOffsetWithOptions),
-        distinctUntilChanged({
+        repeat(2), // Ensure it wraps around, we'll skip the first (incomplete) group
+        groupUntilChanged({
           keySelector: (x) => x.offset,
         }),
-        skip(1), // The first is a duplicate of the last, because we are looping around the year
-        map((adjustment) =>
-          offsetAdjustmentByPreferences(adjustment, options.adjustmentTimeOffset, options.useLstPlus24)
-        )
+        skip(1), // The first unique offset might have been encountered at the end of the previous year
+        map((group): TimeZoneAdjustment => group[Math.floor(group.length / 2)]),
+        scan(
+          (acc, curr, ix) => ({
+            isFirst: ix === 0,
+            first: acc.first ?? curr,
+            curr: curr,
+          }),
+          { isFirst: false, first: null! as TimeZoneAdjustment, curr: null! as TimeZoneAdjustment }
+        ),
+        takeWhile((x) => x.first === x.curr || x.first.timestamp !== x.curr.timestamp),
+        map((x) => x.curr)
       )
     )
 
-    console.log(result)
-
-    return result
+    return result.map((adjustment) =>
+      offsetAdjustmentByPreferences(adjustment, options.adjustmentTimeOffset, options.useLstPlus24)
+    )
   }
 
   export function calculateCurrentUtcOffset(options: LocalSunTimeAdjustmentsOptions & { timestamp: number }): number {

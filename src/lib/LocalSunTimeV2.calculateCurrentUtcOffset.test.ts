@@ -19,5 +19,5 @@ test('getCurrentUtcOffset', () => {
   const result = LocalSunTimeV2.calculateCurrentUtcOffset({ ...options, timestamp: Date.UTC(2023, 2, 13, 0, 0, 0, 0) })
 
   // Assert
-  expect(DateUtils.formatOffset(result)).toMatchInlineSnapshot(`"+05:35"`)
+  expect(DateUtils.formatOffset(result)).toMatchInlineSnapshot(`"+05:40"`)
 })
