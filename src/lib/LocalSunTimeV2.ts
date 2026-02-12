@@ -37,7 +37,13 @@ export type TimeZoneAdjustment = {
 }
 
 export namespace LocalSunTimeV2 {
-  const originUtcDay = [2023, 1, 1] as const // Not a leap year
+  const isLeapYear = (y: number) => (y % 4 === 0 && y % 100 !== 0) || y % 400 === 0
+  const originYear = (() => {
+    let y = new Date().getFullYear()
+    while (isLeapYear(y)) y--
+    return y
+  })()
+  const originUtcDay = [originYear, 1, 1] as const
 
   export function calculateAdjustments(options: LocalSunTimeAdjustmentsOptions): TimeZoneAdjustment[] {
     const calculateLstOffsetWithOptions = (timestamp: number): TimeZoneAdjustment =>
@@ -57,9 +63,9 @@ export namespace LocalSunTimeV2 {
           keySelector: (x) => x.timestamp,
         }),
         map((adjustment) =>
-          offsetAdjustmentByPreferences(adjustment, options.adjustmentTimeOffset, options.useLstPlus24)
-        )
-      )
+          offsetAdjustmentByPreferences(adjustment, options.adjustmentTimeOffset, options.useLstPlus24),
+        ),
+      ),
     )
   }
 
@@ -90,7 +96,7 @@ export namespace LocalSunTimeV2 {
 
   function* utcDayStarts(fromYear: number, fromMonth: number, fromDay: number): Generator<number> {
     const SAMPLE_START_OF_YEAR = new Date(
-      `${fromYear}-${fromMonth.toString().padStart(2, '0')}-${fromDay.toString().padStart(2, '0')}T00:00:00.000Z`
+      `${fromYear}-${fromMonth.toString().padStart(2, '0')}-${fromDay.toString().padStart(2, '0')}T00:00:00.000Z`,
     ).getTime()
     const ONE_DAY = 24 * 60 * 60 * 1000
 
@@ -105,7 +111,7 @@ export namespace LocalSunTimeV2 {
     timestamp: number,
     latitude: number,
     longitude: number,
-    lstOffsetResolution: LocalSunTimeAdjustmentsOptions['lstOffsetResolution']
+    lstOffsetResolution: LocalSunTimeAdjustmentsOptions['lstOffsetResolution'],
   ): TimeZoneAdjustment {
     const sunriseUtcTimestamp = getSunriseUtc(timestamp, latitude, longitude)
     const exactLstOffset = timestamp - sunriseUtcTimestamp
@@ -126,7 +132,7 @@ export namespace LocalSunTimeV2 {
   }
 
   function getLstOffsetResolutionMilliseconds(
-    lstOffsetResolution: LocalSunTimeAdjustmentsOptions['lstOffsetResolution']
+    lstOffsetResolution: LocalSunTimeAdjustmentsOptions['lstOffsetResolution'],
   ): number | null {
     switch (lstOffsetResolution) {
       case 'exact':
@@ -147,7 +153,7 @@ export namespace LocalSunTimeV2 {
   function offsetAdjustmentByPreferences(
     adjustment: TimeZoneAdjustment,
     adjustmentTimeOffset: number,
-    useLstPlus24: boolean
+    useLstPlus24: boolean,
   ): TimeZoneAdjustment {
     const offset = useLstPlus24 ? adjustment.offset + 24 * 60 * 60 * 1000 : adjustment.offset
     const timestampAtStartOfDay = adjustment.timestamp - offset
